@@ -13,7 +13,7 @@ logid = 898303191731544074		# Channel ID
 detec = 898190093804781589              # Channel ID
 everyoneID=898189948803481660           # ID der Rolle everyone
 pathToPrediction = "predictions.jpg"
-
+token = "ODk4MzAzNDI3NTAxNzYwNTcy.YWiQQg.lunTyf1cVfpQO-QmnOO1WWet9uQ" # Der Bot Token
 
 async def report():
 	print	("report")
@@ -70,4 +70,4 @@ class MyBot(discord.Client):
 
 
 client = MyBot()
-client.run("ODk4MzAzNDI3NTAxNzYwNTcy.YWiQQg.lunTyf1cVfpQO-QmnOO1WWet9uQ")
+client.run(token)

@@ -11,6 +11,7 @@ import asyncio			# Für Asyncrone methoden
 import subprocess		# Für Shell befehle
 import time			# Für Verzögerungen
 
+token = "ODk4Mjk2ODc0MDEwODM3MDM0.YWiKKA.MAye6wxu2tmdPG2xcTtlhPPuKqk"# Der Bot Token
 
 def getPassword():
 	pswd = open("passwd.txt" , "r")
@@ -67,4 +68,4 @@ class MyBot(discord.Client):
 
 if __name__ == '__main__':
 	client = MyBot()
-	client.run("ODk4Mjk2ODc0MDEwODM3MDM0.YWiKKA.MAye6wxu2tmdPG2xcTtlhPPuKqk")
+	client.run(token)

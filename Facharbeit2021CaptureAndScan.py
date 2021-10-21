@@ -20,7 +20,10 @@ import os		# Wird von paramiko gebraucht
 from multiprocessing import Process	# Für parraleles ablaufen von Methoden
 
 class core():
-
+    
+	piIP = "192.168.178.62" # IP des Raspberry Pi
+	piPswd = "Pi2021"       # Passwort des Pi's
+	piUsr = "pi"            # Username des Pi's
 	# Gibt die Wahrscheinlichkeit an mit der eine Person erkennt werden muss bevor der Alarm ausgelöst wird
 	minValueAlarm = 40
 
@@ -138,7 +141,7 @@ class core():
 	def alarm(self):
 				ssh = paramiko.SSHClient()                                                              # Aufbauen der Verbindung
 				ssh.load_host_keys(os.path.expanduser('~/.ssh/known_hosts'))
-				ssh.connect("192.168.178.62", username="pi", password="Pi2021")
+				ssh.connect(piIP, username= piUsr, password=piPswd)
 				stdin1, stdout1, stderr1 = ssh.exec_command('sudo 433Utils/RPi_utils/steuerung 1')	# Licht anschalten
 				stdin1.close()
 				time.sleep(2)
@@ -179,7 +182,7 @@ class core():
 		print ("b")
 		ssh.load_host_keys(os.path.expanduser('~/.ssh/known_hosts'))
 		print ("c")
-		ssh.connect("192.168.178.62", username="pi", password="Pi2021")
+		ssh.connect(piIP, username=piUsr, password=piPswd)
 		print ("d")
 		time.sleep(1)
 		stdin1, stdout1, stderr1 = ssh.exec_command('sudo 433Utils/RPi_utils/steuerung 1')		# Licht anschalten
