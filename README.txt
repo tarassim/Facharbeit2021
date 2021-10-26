@@ -21,6 +21,7 @@ Installieren der Packete:
 	sudo pip install discord
 	sudo apt install ffmpeg
 	sudo apt install vlc
+	pip install paramiko
 
 	git clone https://github.com/tarassim/Facharbeit2021.git Facharbeit2021
 	cd Facharbeit2021
