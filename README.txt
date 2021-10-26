@@ -22,7 +22,7 @@ Installieren der Packete:
 	sudo apt install ffmpeg
 	sudo apt install vlc
 
-	git clone  tarassim/Facharbeit2021
+	git clone  tarassim/Facharbeit2021.git
 	cd Facharbeit2021
 	
 	Installieren von Yolo nach:
