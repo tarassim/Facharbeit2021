@@ -33,7 +33,9 @@ Installieren der Packete:
 	cp -r cfg ..
 	cp -r data ..
 	cd .. (in den Facharbeitsordnet zurückkehren)
-
+	
+	mkdir detections
+	
 	mit "nano DATEINAME" die 3 Programme (Logger.py, WatchCat.py, Starten.py) bearbeiten (Token und Channel ID's)
 
 	in Facharbeit2021CaptureAndScan unter def Alarm, def pauseAlarm, def reArmAlarm, einstellen was passieren soll wenn der Alarm ausgelöst wir
