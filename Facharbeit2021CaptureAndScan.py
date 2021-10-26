@@ -1,5 +1,5 @@
 #
-# Facharbeit2021 Autor:Christoph Mörs Version: 3.0
+# Facharbeit2021 Autor:Christoph Mörs Version: 3.2
 #
 #############################################################################################################################
 #
@@ -20,11 +20,11 @@ import os		# Wird von paramiko gebraucht
 from multiprocessing import Process	# Für parraleles ablaufen von Methoden
 
 class core():
-	
-	sshIP = "192.168.178.62"		
-	sshPasswd = "Pi2021"		
-	sshUsr = "pi" 		
-	
+
+	sshIP = "IP" # Hier die IP-Adresse des RaspberryPi's eintragen
+	sshPasswd = "PASSWORT" # Hier das Passwort vom Benutzer auf dem RaspberryPi angeben
+	sshUsr = "USER" # Hier den User des zu verwendendem Accounts eingeben (RaspberryPi)
+
 	# Gibt die Wahrscheinlichkeit an mit der eine Person erkennt werden muss bevor der Alarm ausgelöst wird
 	minValueAlarm = 40
 
@@ -35,7 +35,7 @@ class core():
 	pathToPrediction = "predictions.jpg"
 
 	# Der Befehl womit ich ein Bild aus dem Stream erhalte
-	cmdGetImg ="ffmpeg -loglevel fatal -rtsp_transport tcp -i \"rtsp://GpSJkxsh:A8CH8Q5ubY8S6FT3@192.168.178.111:554/live/ch0\" -r 1 -vframes 1 Camera1.png -y"
+	cmdGetImg ="ffmpeg -loglevel fatal -rtsp_transport tcp -i \"rtsp://GpSJkxsh:A8CH8Q5ubY8S6FT3@192.168.178.111:554/live/ch0\" -r 1 -vframes 1 Camera.png -y"
 
 	# Der Befehl der den Scan auslöst (WICHTIG!!! Der Ordnet data und cfg aus darknet muss sich im gleichen Verzeichniss befinden wie dieses Programm am besten befindet sich der ordner sowohl in /darknet als auch in ./
 	cmdScan = "./darknet/darknet detector test darknet/cfg/coco.data darknet/cfg/yolov4.cfg darknet/yolov4.weights Camera.png -i o -thresh0.25"
@@ -63,7 +63,6 @@ class core():
 					self.log ("start rec")
 					rec = Process(target=self.record)                                 #Startet Aufnahme aber nur wenn der Alarm noch nicht lief
 					rec.start()
-					self.log ("nach rec")
 					self.log("\n" + "Alarm activated at: " + time.ctime()+ "\n")
 						                 # Verbindungsdaten (natürlich verändert)
 					while (self.active):						# Erst wenn disarm() ausgeführt wurde bricht die Schleife ab
@@ -72,12 +71,9 @@ class core():
 						self.alarm()
 						time.sleep(4)
 						self.active = self.readQueue(queue, True)
-					self.log ("bin raus")
 					while (self.active == False):
 						self.active = self.readQueue(queue, False)
-						self.log(str(self.active)+ "\n")
 						time.sleep(0.5)
-					self.log("rearming")
 					self.reArmAlarm(queue)
 
 
@@ -88,8 +84,7 @@ class core():
 		permlog.write(tolog)
 		templog.close()
 		permlog.close()
-	#	log = subprocess.Popen("python3 Logger.py", stdout=subprocess.PIPE, shell=True)	# Logger schickt das Log zu discord in den "log" channel
-	#	log.wait()
+
 
 	def getImg(self):							# Greift ein Bild aus dem Kamera Stream ab
 		log = self.log
@@ -131,20 +126,16 @@ class core():
 				percent = int(rawPercent.lstrip())	# Entfernen des Leerzeichen und umwandeln in int
 				if percent > minValueAlarm:
 					return True
-					print ("True")
 
 
 	def safePic(self):
 		pathToPrediction = self.pathToPrediction
-		print ("1")
 		new = "predictions"+ str(time.ctime()).replace(" ", "")+".jpg"			# Zeitstempel hinzufügen
-		print ("2")
 		c = subprocess.Popen("cp -p "+ pathToPrediction + " " + "./detections/" + new, stdout=subprocess.PIPE, shell=True)	# Speichert eine Kopie der prediction mit Zeit, sodass diese zu einem späteren Zeitpunkt einsehbar ist. Jedes mal wenn eine Person erkannt wurde
-		print ("3")
 		output, err = c.communicate()
-		print ("4")
 
 	def alarm(self):
+			try:
 				ssh = paramiko.SSHClient()                                                              # Aufbauen der Verbindung
 				ssh.load_host_keys(os.path.expanduser('~/.ssh/known_hosts'))
 				ssh.connect(self.sshIP, username=self.sshUsr, password=self.sshPasswd)
@@ -154,22 +145,20 @@ class core():
 				stdin0, stdout0, stderr0 = ssh.exec_command('sudo 433Utils/RPi_utils/steuerung 0')	# Licht ausschalten
 				stdin0.close()
 				ssh.close()
-				print ("closed")										# Verbindung trennen
+			except Exception as e:
+				self.log("ALARM! Aber kein Alarm weil Mr. Raspberry ist mit den Katzen Spielen")										# Verbindung trennen
+				self.log(e)
+			return
 
 	def readQueue(self, queue, excepted):
-		print ("a")
 		if(queue.empty()== False):
 			first = queue.get_nowait()
 			while (queue.empty()==False):
 				puffer = queue.get_nowait					# sorgt dafür das die queue immer leer ist
-			print ("queue : " + str(first))
 			if (str(first) == "True"):
-				print ("return: True")
 				return True
 			elif(str(first) == "False"):
-				print("return: False")
 				return False
-		print ("alternativ")
 		return excepted
 
 
@@ -182,32 +171,35 @@ class core():
 #		self.reArmAlarm(queue)
 		time.sleep(5)
 		
-		self.log ("putput")
 
 	def pauseAlarm(self, queue):
-		self.log ("Wir gehen Rein")
 		self.active = False
-		ssh = paramiko.SSHClient()                                                              # Aufbauen der Verbindung
-		ssh.load_host_keys(os.path.expanduser('~/.ssh/known_hosts'))
-		ssh.connect(self.sshIP, username=self.sshUsr, password=self.sshPasswd)
-		time.sleep(1)
-		stdin1, stdout1, stderr1 = ssh.exec_command('sudo 433Utils/RPi_utils/steuerung 1')		# Licht anschalten
-		stdin1.close()
-		ssh.close()
-		self.log("\n" + "Alarm Stoped at: " + time.ctime()+ "\n")
-		
+		try:
+			ssh = paramiko.SSHClient()                                                              # Aufbauen der Verbindung
+			ssh.load_host_keys(os.path.expanduser('~/.ssh/known_hosts'))
+			ssh.connect(self.sshIP, username=self.sshUsr, password=self.sshPasswd)
+			time.sleep(1)
+			stdin1, stdout1, stderr1 = ssh.exec_command('sudo 433Utils/RPi_utils/steuerung 1')		# Licht anschalten
+			stdin1.close()
+			ssh.close()
+			self.log("\n" + "Alarm Stoped at: " + time.ctime()+ "\n")
+		except Exception as e:
+			self.log("Licht konnte nicht Angeschaltet werden!")
+		return
+
 	def reArmAlarm(self, queue):
-		self.log ("wir bleiben drin")
-		self.log("und aus")
-		ssh = paramiko.SSHClient()                                                              # Aufbauen der Verbindung
-		ssh.load_host_keys(os.path.expanduser('~/.ssh/known_hosts'))
-		ssh.connect(self.sshIP, username=self.sshUsr, password=self.sshPasswd)
-		stdin0, stdout0, stderr0 = ssh.exec_command('sudo 433Utils/RPi_utils/steuerung 0')      # Licht ausschalten
-		stdin0.close
-		ssh.close()
-		self.stopRecord()
-		time.sleep(4)
-		self.log("The System is Active: " + time.ctime())
+		try:
+			ssh = paramiko.SSHClient()                                                              # Aufbauen der Verbindung
+			ssh.load_host_keys(os.path.expanduser('~/.ssh/known_hosts'))
+			ssh.connect(self.sshIP, username=self.sshUsr, password=self.sshPasswd)
+			stdin0, stdout0, stderr0 = ssh.exec_command('sudo 433Utils/RPi_utils/steuerung 0')      # Licht ausschalten
+			stdin0.close
+			ssh.close()
+			self.stopRecord()
+			time.sleep(4)
+			self.log("The System is Active: " + time.ctime())
+		except Exception as e:
+			self.log("System konnte nicht Ausgeschaltet werden!")
 		self.alreadyrunning = False
 		return
 
@@ -234,10 +226,3 @@ class core():
 		finally:
 			return
 	load=True										# Lädt alle Methoden der Klasse
-	print("geladen")
-
-#if __name__ == "__main__":
-#	print ("ja")
-#	anlage = core()
-#	anlage.main(anlage)
-#	print("hä")

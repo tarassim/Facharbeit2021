@@ -22,7 +22,7 @@ Installieren der Packete:
 	sudo apt install ffmpeg
 	sudo apt install vlc
 
-	mkdir Facharbeit2021
+	git clone  tarassim/Facharbeit2021
 	cd Facharbeit2021
 	
 	Installieren von Yolo nach:
@@ -33,20 +33,13 @@ Installieren der Packete:
 	cp -r cfg ..
 	cp -r data ..
 	cd .. (in den Facharbeitsordnet zurückkehren)
-	git clone  tarassim/Facharbeit2021 
-	cd Facharbeit2021
-	mv Logger.py ..
-	mv WatchCat ..
-	mv Start.py ..
-	mv Facharbeit2021CaptureAndScan.py ..
-	mkdir detections
 
-	nano passwd.txt hier Baum1234 reinschreiben und mit Ctrl +x , y, Enter Speichern
-	nano templog.txt hier "1" reinschreiben und mit Ctrl +x , y, Enter Speichern	
 	mit "nano DATEINAME" die 3 Programme (Logger.py, WatchCat.py, Starten.py) bearbeiten (Token und Channel ID's)
 
 	in Facharbeit2021CaptureAndScan unter def Alarm, def pauseAlarm, def reArmAlarm, einstellen was passieren soll wenn der Alarm ausgelöst wir
-
+	
+	sicherstellen, dass wenn der Alarm über ssh(ausgelöst war der rechner zuvor einmalig mit dem zu ereichendem Rechner verbunden war)
+	
 	und finally: python Starten.py und im Discord /startSystem Baum1234
 
 	mit /help herhalten sie eine übersicht aller Befehle

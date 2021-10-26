@@ -1,21 +1,20 @@
 #
 # Facharbeit2021Starter sorgt dafür, dass man die Anlage nach einem Absturz wieder startenb kann
-# v3.0
+# v3.2
 #
 # Python (nicht Python3!!!)
 #
-
 
 import discord			# Importiert Discord Libary
 import asyncio			# Für Asyncrone methoden
 import subprocess		# Für Shell befehle
 import time			# Für Verzögerungen
 
-token = "ODk4Mjk2ODc0MDEwODM3MDM0.YWiKKA.MAye6wxu2tmdPG2xcTtlhPPuKqk"# Der Bot Token
+token = "TOKEN" # Der Bot Token
 
 def getPassword():
 	pswd = open("passwd.txt" , "r")
-	passwrd = pswd.readline()
+	passwrd = pswd.readline().strip()
 	pswd.close()
 	return passwrd
 
@@ -34,7 +33,6 @@ def kill():
 	processes = processes.replace("'","")
 	processes = processes.split("\\n")
 	for x in processes:
-		print(x)
 		rip2 = subprocess.Popen("kill -9 " + x, stdout=subprocess.PIPE, shell=True)
 		rip2.wait()
 

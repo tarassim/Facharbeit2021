@@ -1,8 +1,8 @@
 #
-# Facharbeit2021WatchCat dies ist der Bot welcher die Alarmanlage Steuert und auch über Logger richten kann.
+# Facharbeit2021WatchCat dies ist der Bot welcher die Alarmanlage Steuert und die Schnitstelle zwichen User und Programm darstellt
 # Also quasi DER rosa Elephant unter den Rosa Elephanten
 #
-# v3.0
+# v3.2
 #
 
 import discord		# Wie immer die Discord Lib
@@ -23,10 +23,11 @@ runstream = False
 detec = 898190093804781589              # Channel ID
 everyoneID=898189948803481660           # ID der Rolle everyone
 pathToPrediction = "predictions.jpg"
+token = "TOKEN" # Bot token
 
 def getPassword():
 	pswd = open("passwd.txt" , "r")
-	passwrd = pswd.readline()
+	passwrd = pswd.readline().strip()
 	pswd.close()
 	return passwrd
 
@@ -43,14 +44,11 @@ async def cleanChannel(pCount, pChannel):
 
 
 
-def handleRecord(pTime):	# Das sind nicht die Jed-i ähhh die Methode die Sie suchen
-	print ("Hä")			# Nein wirklich die Lösung ist einfach beschissen aber die beste die ich finden konnte
-	p1 = Process(target=core.record)
+def handleRecord(pTime):	# Das sind nicht die Jed-i ähhh die Methode die Sie suchen!	
+	p1 = Process(target=core.record)# Nein wirklich die Lösung ist einfach beschissen aber die beste die ich finden konnte
 	p1.start()
-	print("zwichen")
 	p2 = Process(target=timeToRecord, args=(pTime,))
 	p2.start()
-	print ("weiter")
 	return
 
 def timeToRecord(pTime):
@@ -72,7 +70,6 @@ def kill():
 	processes = processes.replace("'","")
 	processes = processes.split("\\n")
 	i = len(processes)-1
-	print (processes)
 	while i >=0:
 		try:
 			rip2 = subprocess.Popen("kill -9 " + str(int(processes[i-1])), stdout=subprocess.PIPE, shell=True)
@@ -104,7 +101,6 @@ class MyBot(discord.Client):
 
 
 	async def stream(self):
-		print("stream Test")
 		while runstream == True:
 			p = subprocess.Popen(cmdGetImg, stdout=subprocess.PIPE, shell=True)
 			p.wait()
@@ -176,35 +172,23 @@ O {praefix}restart PASSWORD => Startet die Anlage neu HANDLE_WITH_CARE\n\
 			splitinput = input.split(" ")
 			if (splitinput[1]=="stream"):
 				runstream= True
-				print (self)
-				print (message.channel)
 				s = threading.Thread(target=await self.stream())		# Führt die Methode stream() parrallel zum Rest aus
 				s.deamon = True
-				print ("nope")				# Führt die Methode stream() parrallel zum Rest aus
-			elif (splitinput[1]=="audio"):
-				pass # TODO: audio konversation einfügen !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		if(message.content.startswith(praefix+"stop ")):
 			input = message.content
 			splitinput = input.split(" ")
 			if (splitinput[1]=="stream"):
 				runstream = False
-			elif (splitinput[1]=="audio"):
-				pass # TODO: audio konversation einfügen !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		if(message.content.startswith(praefix+"record ")):
 			input = message.content
 			splitinput = input.split(" ")
-			#r = subprocess.Popen("cvlc rtsp://GpSJkxsh:A8CH8Q5ubY8S6FT3@192.168.178.111:554/live/ch0 --sout=file/ts:record.mpg", stdout=subprocess.PIPE, shell=True)
-			print ("before")
 			handleRecord(int(splitinput[1])*60)
-			print("parralel")
 		if(message.content.startswith(praefix+"disarm " + getPassword())):
 			await cleanChannel(1, message.channel)
 			await message.channel.send("accepted!")
 			time.sleep(1)
 			await cleanChannel(1, message.channel)
-			print ("Trying...")
 			core.disarmAlarm(self.queue)		#Teil disarm die Instanz mit in der der core Prozess läuft und die queue zur kommunikation
-			print ("Done")
 			statusCh = client.get_channel(statusChID)
 			everyone = discord.utils.get(client.get_channel(detec).guild.roles, id=everyoneID)
 			await cleanChannel(1, statusCh)
@@ -227,15 +211,7 @@ O {praefix}restart PASSWORD => Startet die Anlage neu HANDLE_WITH_CARE\n\
 			await statusCh.send("```diff\nThe System is: \n- inactive\n```")
 			kill()
 
-	#dchannel=client.get_channel(detec)
-        #global yep
-        #global pathToPrediction
-        #if yep:
-        #    await dchannel.send(file=discord.File(pathToPrediction))
-        #    yep = False
-        #exit()
 if __name__ == '__main__':
 	logger = subprocess.Popen("python3 Logger.py", stdout=subprocess.PIPE, shell=True)
-	#logger.wait()
 	client = MyBot()
-	client.run("ODk4MTgwODU3MDQxMzk5ODE4.YWgeGw.DhipqSJ8tDV0Ug6IdAM7yaUqGrg")
+	client.run(token)

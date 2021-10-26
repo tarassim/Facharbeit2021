@@ -1,7 +1,7 @@
 #
 #
 # Facharbeit2021Logger das ist der Bot der für das loggen und reporten zuständig ist
-# V3.0
+# V3.2
 #
 #
 
@@ -13,15 +13,13 @@ logid = 898303191731544074		# Channel ID
 detec = 898190093804781589              # Channel ID
 everyoneID=898189948803481660           # ID der Rolle everyone
 pathToPrediction = "predictions.jpg"
-token = "ODk4MzAzNDI3NTAxNzYwNTcy.YWiQQg.lunTyf1cVfpQO-QmnOO1WWet9uQ" # Der Bot Token
+token = "TOKEN" # Der Bot Token (Hier den Bot Token eintragen)
 
 async def report():
-	print	("report")
 	global pathToPrediction
 	log = open("templog.txt", "r")									# Öffnet templog.txt
 	for x in log:											# Geht Zeile für Zeile durch und sucht nach "Alarm activated:"
 		if(x.lstrip().startswith("Alarm activated at:")):					# Wurde in der Zwichenzeit ein Alarm ausgelöst, sendet er ein Bild vom Täter in den "detections" Channel und Meldet das Ereigniss
-			print (True)
 			everyone = discord.utils.get(client.get_channel(detec).guild.roles, id=everyoneID)
 			dchannel=client.get_channel(detec)                                      	# Bild holen und senden
 			await dchannel.send(f'Achtung {everyone}, eine Person wurde erkannt!!!')
@@ -31,7 +29,6 @@ async def report():
 			r = subprocess.Popen("cp -p "+ pathToPrediction + " " + "./detections/" + new, stdout=subprocess.PIPE, shell=True)
 			r.wait()
 			log.close()
-			print ("done")
 			return True									# Alarm wurde gemeldet und weiteres Absuchen wird unterbrochen um Zeit zu sparen, sollte der Alarm in der Zeit mehrmals aktiviert wurden sein (Logger war über lange Zeit deaktiviert) wird nur das letzte Bild Ausgegeben
 	log.close()
 	return False											# Es wurde kein Alarm ausgelöst
