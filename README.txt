@@ -29,7 +29,9 @@ Installieren der Packete:
 	https://robocademy.com/2020/05/01/a-gentle-introduction-to-yolo-v4-for-object-detection-in-ubuntu-20-04/
 	(Achtung in Makefile mus OpenCV = 0 stehen und die einstellungen entsprechen CPU oder GPU build)
 	(Achtung: Haben Sie Yolo v4 weigths runtergeladen? (https://drive.google.com/u/0/uc?export=download&confirm=ZrNT&id=11m9OszXC2kO33sDl8a0gtrNIlZs40D3z))
+	(Troubleshooting: sollte beim Testen die Fehlermeldung "core dumped" oder "Speicherabzug geschrieben" muss in Makefile AVX=0 gesetzt werden und erneut make ausgeführt werden)
 	
+	Begeben sie sich in den darknet ordner
 	cp -r cfg ..
 	cp -r data ..
 	cd .. (in den Facharbeitsordnet zurückkehren)
