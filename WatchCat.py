@@ -128,7 +128,7 @@ This is a list of all commands:\n\
 + {praefix}help => Zeigt diese Hilfe Seite\n\
 + {praefix}changePassword PASSWORD NEW_PASSWORD => Ändern des Passworts\n\
 + {praefix}clean ANZAHL => Löcht die letzten ANZAHL Nachrichten in dem Channel der Nachricht\n\
-+ {praefix}startSystem stream => Streamt live Bilder in den \#stream Channel\n\
++ {praefix}start stream => Streamt live Bilder in den \#stream Channel\n\
 + {praefix}stop stream => Stoppt den Livestream\n\
 + {praefix}record TIME => Nimmt für TIME Minute ein Video auf und Speichert es auf dem Analyse-Pc\n\
 + {praefix}disarm PASSWORD => Entschärft die Alarmanlage/stellt den Alarm aus\n\
